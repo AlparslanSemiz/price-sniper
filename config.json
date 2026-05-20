@@ -1,0 +1,90 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "NVIDIA RTX 4070",
+      "search_query": "RTX 4070",
+      "price_alert_min": 450,
+      "price_alert_max": 650,
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "AMD Ryzen 7 9800X3D",
+      "search_query": "Ryzen 7 9800X3D",
+      "price_alert_min": 380,
+      "price_alert_max": 520,
+      "active": true
+    },
+    {
+      "id": 3,
+      "name": "Intel Core i9-14900K",
+      "search_query": "Intel i9-14900K",
+      "price_alert_min": 480,
+      "price_alert_max": 720,
+      "active": true
+    },
+    {
+      "id": 4,
+      "name": "AMD Ryzen 5 7600X",
+      "search_query": "Ryzen 5 7600X",
+      "price_alert_min": 180,
+      "price_alert_max": 280,
+      "active": true
+    },
+    {
+      "id": 5,
+      "name": "DDR5 32GB RAM Kingston",
+      "search_query": "DDR5 32GB Kingston",
+      "price_alert_min": 90,
+      "price_alert_max": 180,
+      "active": true
+    },
+    {
+      "id": 6,
+      "name": "ASUS ROG Strix RTX 4080",
+      "search_query": "RTX 4080 ASUS",
+      "price_alert_min": 900,
+      "price_alert_max": 1200,
+      "active": true
+    },
+    {
+      "id": 7,
+      "name": "Samsung 980 Pro 1TB NVMe",
+      "search_query": "Samsung 980 Pro",
+      "price_alert_min": 60,
+      "price_alert_max": 120,
+      "active": true
+    },
+    {
+      "id": 8,
+      "name": "LG 27-inch 4K Monitor",
+      "search_query": "LG 27 4K Monitor",
+      "price_alert_min": 250,
+      "price_alert_max": 450,
+      "active": true
+    }
+  ],
+  "settings": {
+    "check_interval_minutes": 60,
+    "enable_notifications": true,
+    "notification_channels": [
+      "console",
+      "file"
+    ],
+    "headless_mode": false,
+    "screenshot_on_error": true,
+    "max_retries": 3
+  },
+  "providers": {
+    "geizhals": {
+      "enabled": true,
+      "delay_ms": 2500
+    },
+    "kleinanzeigen": {
+      "enabled": true,
+      "delay_ms": 2000,
+      "max_listings_check": 10
+    }
+  }
+}

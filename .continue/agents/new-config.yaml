@@ -1,0 +1,35 @@
+name: Pro Geliştirici Kurulumu
+version: 1.0.0
+schema: v1
+
+# Modeller: Sohbet ve karmaşık görevler için
+models:
+  - name: DeepSeek Coder (Mantık ve Hata Ayıklama)
+    provider: ollama
+    model: deepseek-coder-v2:16b
+  - name: Qwen 7B (Hızlı Kod Yazımı)
+    provider: ollama
+    model: qwen2.5-coder:7b
+  - name: GPT-5 (Bulut)
+    provider: openai
+    model: gpt-5
+
+# Otomatik Tamamlama: Yazarken anlık öneri veren model
+# 6GB VRAM için en akıcı deneyim 1.5B modelidir.
+tabAutocompleteModel:
+  name: Qwen 1.5B (Lokal - Hızlı Tamamlama)
+  provider: ollama
+  model: qwen2.5-coder:1.5b
+
+# Projenin tamamını anlaması için (RAG)
+contextProviders:
+  - name: codebase
+    displayTitle: Proje Geneli
+  - name: diff
+    displayTitle: Değişiklikler
+  - name: terminal
+    displayTitle: Terminal Çıktısı
+
+# Ajan yetenekleri ve hafıza
+mcpServers:
+  - uses: anthropic/memory-mcp
