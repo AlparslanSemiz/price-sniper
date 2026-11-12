@@ -29,7 +29,7 @@ Elektronik ürünlerin fiyatlarını **Geizhals.de** ve **Kleinanzeigen.de** gib
 
 ### 1. Gerekli Bağımlılıkları Yükle
 ```bash
-cd c:\Users\Alp\VSCodeProjects\priceSniper
+cd priceSniper
 pip install -r requirements_new.txt
 ```
 
