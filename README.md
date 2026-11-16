@@ -39,7 +39,7 @@ python main_orchestrator.py            # check every product once and exit
 python main_scheduler.py --scheduled   # check on an interval
 ```
 
-Alerts are produced by the scheduler (`main_scheduler.py`). The browser window opens visibly while scraping (`headless=False` in the providers).
+Alerts are logged as warnings (to the console) by both `main_orchestrator.py` and `main_scheduler.py`. The browser window opens visibly while scraping (`headless=False` in the providers).
 
 ## Configuration
 
@@ -92,7 +92,7 @@ Adding a provider: put a new class with `async get_price(product_name)` in `pric
 
 - Playwright errors: run `playwright install chromium` again.
 - No price found: check the product's `search_query` in `config.json` and open the site by hand to see whether its page layout changed.
-- Everything is logged to `pricesniper.log` and the console.
+- Both scripts log to the console; only `main_scheduler.py` also writes `pricesniper.log`.
 
 ## Status
 
@@ -101,3 +101,7 @@ An early prototype from May 2026. The scrapers depend on the sites' current page
 ## Tech
 
 Python, Playwright, BeautifulSoup, SQLAlchemy, APScheduler.
+
+## License
+
+MIT
