@@ -1,85 +1,49 @@
-# 🛍️ PriceSniper - Otomatik Fiyat Takip Aracı
+<h1 align="center">PriceSniper</h1>
+<p align="center">Tracks electronics prices on Geizhals.de and Kleinanzeigen.de and warns you when a price leaves the range you set.</p>
 
-Elektronik ürünlerin fiyatlarını **Geizhals.de** ve **Kleinanzeigen.de** gibi web sitelerinden otomatik olarak takip eden Python uygulaması.
+<p align="center">
+<img src="https://img.shields.io/badge/Python-3-555?style=flat" alt="Python 3">
+<img src="https://img.shields.io/badge/Playwright-scraping-555?style=flat" alt="Playwright">
+<img src="https://img.shields.io/badge/SQLite-history-555?style=flat" alt="SQLite">
+<img src="https://img.shields.io/badge/status-early-555?style=flat" alt="early stage">
+</p>
 
-## 📋 Özellikler
+<p align="center"><b><a href="#install">Install</a></b> · <a href="#run">Run</a> · <a href="#configuration">Configure</a></p>
 
-✅ **Çoklu Sağlayıcı Desteği**
-- Geizhals.de (Resmi elektronik ürün sitesi)
-- Kleinanzeigen.de (İkinci el ve yeni ürün pazarı)
+## Why
 
-✅ **Çoklu Ürün Takibi**
-- 8+ ürün için eşzamanlı fiyat kontrolü
-- Kolay JSON konfigürasyonu
+Good prices on graphics cards and CPUs come and go within hours, on the new-goods price comparison and on the second-hand market alike. PriceSniper checks both for the products in a JSON file, stores every price in SQLite and tells you when one falls below or rises above your limits.
 
-✅ **Fiyat Uyarıları**
-- Min/Max fiyat belirleme
-- Otomatik bildirimler
+## Features
 
-✅ **Zamanlı Çalışma**
-- APScheduler ile periyodik kontroller
-- Özelleştirilebilir zaman aralıkları
+- Two providers: Geizhals.de (new) and Kleinanzeigen.de (new and used).
+- Many products at once, configured in `config.json` (8 sample products included).
+- Alert thresholds per product (`price_alert_min`, `price_alert_max`).
+- Single run or scheduled runs with APScheduler (default every 60 minutes).
+- Notifications to the console and to `alerts.log`. Notifiers are small classes, so new channels are easy to add.
+- Price history in SQLite.
 
-✅ **Bildirim Sistemi**
-- Konsol bildirimleri
-- Dosyaya kaydetme (alert log)
-- Genişletilebilir mimarisi
+## Install
 
-## 🚀 Kurulum
-
-### 1. Gerekli Bağımlılıkları Yükle
 ```bash
-cd priceSniper
 pip install -r requirements_new.txt
-```
-
-### 2. Playwright Tarayıcılarını Yükle
-```bash
 playwright install chromium
 ```
 
-## 📁 Proje Yapısı
+Run both commands from the repository root.
 
-```
-priceSniper/
-├── main_orchestrator.py       # Tek çalışma modu
-├── main_scheduler.py          # Zamanlı çalışma modu
-├── config.json                # Ürün konfigürasyonu
-├── requirements_new.txt       # Bağımlılıklar
-├── data/
-│   ├── pricesniper.db         # SQLite veritabanı
-│   └── screenshots/           # Hata durumunda ekran görüntüleri
-├── priceSniper/
-│   ├── src/
-│   │   ├── database/
-│   │   │   └── models.py      # SQLAlchemy modelleri
-│   │   ├── providers/
-│   │   │   ├── geizhals.py    # Geizhals scraper
-│   │   │   └── kleinanzeigen.py # Kleinanzeigen scraper
-│   │   ├── notifiers/
-│   │   │   ├── base.py        # Temel notifier sınıfı
-│   │   │   ├── console_notifier.py
-│   │   │   └── file_notifier.py
-│   │   └── brain/             # AI/LLM entegrasyonu için
-│   └── __init__.py
-└── README.md
-```
+## Run
 
-## 🎯 Kullanım
-
-### Tek Çalışma Modu
 ```bash
-python main_orchestrator.py
+python main_orchestrator.py            # check every product once and exit
+python main_scheduler.py --scheduled   # check on an interval
 ```
-Bir kez tüm ürünleri kontrol eder ve çıkar.
 
-### Zamanlı Modu (Önerilen)
-```bash
-python main_scheduler.py --scheduled
-```
-Ayarlanmış zaman aralıklarında (default: 60 dakika) otomatik olarak fiyat kontrol eder.
+Alerts are produced by the scheduler (`main_scheduler.py`). The browser window opens visibly while scraping (`headless=False` in the providers).
 
-## 🔧 Konfigürasyon (config.json)
+## Configuration
+
+`config.json`:
 
 ```json
 {
@@ -88,8 +52,8 @@ Ayarlanmış zaman aralıklarında (default: 60 dakika) otomatik olarak fiyat ko
       "id": 1,
       "name": "NVIDIA RTX 4070",
       "search_query": "RTX 4070",
-      "price_alert_min": 450,      // € altında uyarı
-      "price_alert_max": 650,      // € üstünde uyarı
+      "price_alert_min": 450,
+      "price_alert_max": 650,
       "active": true
     }
   ],
@@ -101,116 +65,39 @@ Ayarlanmış zaman aralıklarında (default: 60 dakika) otomatik olarak fiyat ko
 }
 ```
 
-## 💾 Veritabanı
+Prices are in euros. The alert fires below `price_alert_min` or above `price_alert_max`.
 
-SQLite kullanılmaktadır (`data/pricesniper.db`):
-
-### products tablosu
-- `id` - Ürün ID
-- `name` - Ürün adı
-- `search_query` - Arama sorgusu
-
-### price_history tablosu
-- `id` - Kayıt ID
-- `product_id` - Ürünün ID'si
-- `source` - Kaynak (Geizhals, Kleinanzeigen)
-- `price` - Fiyat (€)
-- `url` - Ürün URL'i
-- `timestamp` - Kontrol zamanı
-
-## 📊 Örnek Çıktı
+<details>
+<summary>Project layout and database</summary>
 
 ```
-2026-05-16 20:45:30,123 - INFO - ======================================================================
-2026-05-16 20:45:30,124 - INFO - 🕐 Fiyat kontrolü başladı: 2026-05-16 20:45:30
-2026-05-16 20:45:30,125 - INFO - ======================================================================
-
-2026-05-16 20:45:30,126 - INFO - 
-📦 Ürün işleniyor: NVIDIA RTX 4070
-2026-05-16 20:45:30,127 - INFO -   🔍 Geizhals.de taranıyor...
-2026-05-16 20:45:35,452 - INFO -   ✅ Geizhals: 549.99€
-2026-05-16 20:45:35,453 - INFO -   🔍 Kleinanzeigen.de taranıyor...
-2026-05-16 20:45:42,678 - INFO -   ✅ Kleinanzeigen: 499€
-
-======================================================================
-📊 FİYAT ÖZETİ
-======================================================================
-
-📦 NVIDIA RTX 4070
-   Geizhals: 549.99€ (2026-05-16 20:45:35)
-   Kleinanzeigen: 499€ (2026-05-16 20:45:42)
+main_orchestrator.py        single run
+main_scheduler.py           scheduled run and alerts
+config.json                 products and settings
+data/pricesniper.db         SQLite database
+priceSniper/src/
+  database/models.py        SQLAlchemy models
+  providers/                geizhals.py, kleinanzeigen.py
+  notifiers/                base.py, console_notifier.py, file_notifier.py
+  brain/                    placeholder for an LLM step (empty)
 ```
 
-## ⚙️ İleri Ayarlar
+Tables: `products` (id, name, search_query) and `price_history` (id, product_id, source, price in EUR, url, timestamp).
 
-### WebDriver Tespiti Engelleme
-Her provider otomatik olarak WebDriver tespitini gizler:
-```python
-await page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-```
+Adding a provider: put a new class with `async get_price(product_name)` in `priceSniper/src/providers/`. Adding a notifier: subclass `BaseNotifier` in `priceSniper/src/notifiers/` and implement `notify(message)`.
 
-### User-Agent Kustomizasyonu
-Modern Chrome tarayıcısı olarak tanınır:
-```python
-user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36..."
-```
+</details>
 
-## 🚨 Sorun Giderme
+## Troubleshooting
 
-### Playwright Hatası
-```bash
-playwright install chromium
-```
+- Playwright errors: run `playwright install chromium` again.
+- No price found: check the product's `search_query` in `config.json` and open the site by hand to see whether its page layout changed.
+- Everything is logged to `pricesniper.log` and the console.
 
-### Bağlantı Hatası
-- İnternet bağlantınızı kontrol edin
-- Siteye doğrudan erişip erişemediğinizi test edin
+## Status
 
-### Fiyat Bulunamadı
-- Ürün adını config.json'da kontrol edin
-- Siteyi manuel olarak ziyaret edip sayfa yapısını kontrol edin
+An early prototype from May 2026. The scrapers depend on the sites' current page layout and can break when it changes. Alert messages are in Turkish. Respect the terms of the sites you scrape and keep the interval modest.
 
-## 📝 Günlük Log
+## Tech
 
-Tüm işlemler `pricesniper.log` dosyasına kaydedilir ve konsola yazdırılır.
-
-## 🔐 Güvenlik
-
-- `.env` dosyası (varsa) hassas veriler için
-- Veritabanı `data/` klasöründe saklanır
-- Web scrapingle ilgili etikler dikkatle izlenir
-
-## 🤝 Geliştirme
-
-### Yeni Sağlayıcı Ekleme
-`src/providers/` klasöründe yeni bir Python dosyası oluşturun:
-
-```python
-from playwright.async_api import async_playwright
-
-class NewProvider:
-    async def get_price(self, product_name):
-        # Implementasyon
-        return (price, url)
-```
-
-### Yeni Notifier Ekleme
-`src/notifiers/` klasöründe yeni bir notifier oluşturun:
-
-```python
-from .base import BaseNotifier
-
-class DiscordNotifier(BaseNotifier):
-    def notify(self, message: str):
-        # Discord'a gönder
-        pass
-```
-
-## 📄 Lisans
-
-MIT License
-
----
-
-**Yapım**: Alp  
-**Başlangıç**: 2026-05-16
+Python, Playwright, BeautifulSoup, SQLAlchemy, APScheduler.
